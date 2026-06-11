@@ -1,0 +1,63 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "Inter", "Open Sans", sans-serif;
+  --font-poppins: "Poppins", sans-serif;
+  
+  --color-brand-pink: #3F2325;
+  --color-brand-rosegold: #E2B593;
+  --color-brand-ivory: #0B0A08;
+  --color-brand-beige: #22201D;
+  --color-brand-cream: #141310;
+  --color-brand-gold: #E8C359;
+  --color-brand-charcoal: #ECE6DF;
+  --color-white: #141310;
+
+  --animate-fade-in-up: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  --animate-float: float 4s ease-in-out infinite;
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  15% {
+    opacity: 0.1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+/* Custom global overrides for premium elements */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0B0A08;
+}
+::-webkit-scrollbar-thumb {
+  background: #D8A47F;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #C9A227;
+}
+
+/* Smooth active state transitions */
+.transition-luxury {
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}

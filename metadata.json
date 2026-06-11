@@ -1,0 +1,8 @@
+{
+  "name": "Natural Glow",
+  "description": "Premium luxury skincare e-commerce application offering face serums, moisturizers, cleansers, and custom beauty routines with interactive cart, wishlist, and smart product details.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
