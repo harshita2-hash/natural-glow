@@ -754,10 +754,19 @@ export default function App() {
               {PRODUCTS.filter(p => comparedIds.includes(p.id)).map((p) => (
                 <div key={p.id} className="p-4 bg-brand-cream/10 border border-brand-beige rounded-2xl relative space-y-4">
                   <header className="flex items-center space-x-2.5">
-                    <div className="w-8 h-10 bg-white p-1 rounded-md flex items-center justify-center shadow-xs">
-                      <div className="scale-50">
-                        <ProductSVG shapeType={p.shapeType} gradientFrom={p.gradientFrom} gradientTo={p.gradientTo} name={p.name} />
-                      </div>
+                    <div className="w-8 h-10 bg-white rounded-md flex items-center justify-center shadow-xs overflow-hidden">
+                      {p.image ? (
+                        <img 
+                          src={p.image} 
+                          alt={p.name} 
+                          className="w-full h-full object-cover"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <div className="scale-50 p-1">
+                          <ProductSVG shapeType={p.shapeType} gradientFrom={p.gradientFrom} gradientTo={p.gradientTo} name={p.name} />
+                        </div>
+                      )}
                     </div>
                     <div className="min-w-0">
                       <h4 className="font-bold text-brand-charcoal truncate text-xs">{p.name}</h4>
@@ -896,7 +905,16 @@ export default function App() {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
               <div className="aspect-square bg-gradient-to-tr from-brand-ivory to-brand-beige border rounded-2xl flex items-center justify-center relative overflow-hidden">
-                <ProductSVG shapeType={quickViewProduct.shapeType} gradientFrom={quickViewProduct.gradientFrom} gradientTo={quickViewProduct.gradientTo} name={quickViewProduct.name} />
+                {quickViewProduct.image ? (
+                  <img 
+                    src={quickViewProduct.image} 
+                    alt={quickViewProduct.name} 
+                    className="w-full h-full object-cover"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <ProductSVG shapeType={quickViewProduct.shapeType} gradientFrom={quickViewProduct.gradientFrom} gradientTo={quickViewProduct.gradientTo} name={quickViewProduct.name} />
+                )}
               </div>
 
               <div className="space-y-4">

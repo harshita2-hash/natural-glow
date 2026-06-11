@@ -233,11 +233,20 @@ export default function SkincarePlanner({ onAddBundleToCart, onSelectProduct }: 
                         <p className="text-[10px] text-brand-charcoal/40 font-semibold">{product.categoryLabel}</p>
                       </div>
                     </div>
-                    {/* Tiny micro svg */}
-                    <div className="w-8 h-8 rounded-full bg-brand-cream/20 flex items-center justify-center">
-                      <div className="scale-50">
-                        <ProductSVG shapeType={product.shapeType} gradientFrom={product.gradientFrom} gradientTo={product.gradientTo} name={product.name} />
-                      </div>
+                    {/* Tiny micro thumbnail */}
+                    <div className="w-8 h-8 rounded-full bg-brand-cream/20 flex items-center justify-center overflow-hidden flex-shrink-0">
+                      {product.image ? (
+                        <img 
+                          src={product.image} 
+                          alt={product.name} 
+                          className="w-full h-full object-cover"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <div className="scale-50">
+                          <ProductSVG shapeType={product.shapeType} gradientFrom={product.gradientFrom} gradientTo={product.gradientTo} name={product.name} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -266,11 +275,20 @@ export default function SkincarePlanner({ onAddBundleToCart, onSelectProduct }: 
                         <p className="text-[10px] text-white/40 font-semibold">{product.categoryLabel}</p>
                       </div>
                     </div>
-                    {/* Tiny micro svg */}
-                    <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center">
-                      <div className="scale-50">
-                        <ProductSVG shapeType={product.shapeType} gradientFrom={product.gradientFrom} gradientTo={product.gradientTo} name={product.name} />
-                      </div>
+                    {/* Tiny micro thumbnail */}
+                    <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center overflow-hidden flex-shrink-0">
+                      {product.image ? (
+                        <img 
+                          src={product.image} 
+                          alt={product.name} 
+                          className="w-full h-full object-cover"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <div className="scale-50">
+                          <ProductSVG shapeType={product.shapeType} gradientFrom={product.gradientFrom} gradientTo={product.gradientTo} name={product.name} />
+                        </div>
+                      )}
                     </div>
                   </div>
                 ))}

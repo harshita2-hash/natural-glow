@@ -119,17 +119,28 @@ export default function ProductDetails({
             {!is360Active ? (
               <div 
                 onClick={() => setIsZoomed(true)}
-                className="w-full h-full flex items-center justify-center cursor-zoom-in group relative"
+                className="w-full h-full flex items-center justify-center cursor-zoom-in group relative overflow-hidden"
               >
-                {/* Clean beautiful enlargement shadows backing */}
-                <div className={`absolute p-1 w-48 h-48 rounded-full ${product.bgDecorative} opacity-20 blur-2xl pointer-events-none scale-150`}></div>
+                {product.image ? (
+                  <img 
+                    src={product.image} 
+                    alt={product.name} 
+                    className="w-full h-full object-cover rounded-2xl transition-transform duration-700 ease-out group-hover:scale-105"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <>
+                    {/* Clean beautiful enlargement shadows backing */}
+                    <div className={`absolute p-1 w-48 h-48 rounded-full ${product.bgDecorative} opacity-20 blur-2xl pointer-events-none scale-150`}></div>
+                    
+                    {/* Drawn luxury SVG product element */}
+                    <div className="scale-150 transition-transform duration-500 group-hover:scale-160">
+                      <ProductSVG shapeType={product.shapeType} gradientFrom={product.gradientFrom} gradientTo={product.gradientTo} name={product.name} />
+                    </div>
+                  </>
+                )}
                 
-                {/* Drawn luxury SVG product element */}
-                <div className="scale-150 transition-transform duration-500 group-hover:scale-160">
-                  <ProductSVG shapeType={product.shapeType} gradientFrom={product.gradientFrom} gradientTo={product.gradientTo} name={product.name} />
-                </div>
-                
-                <span className="absolute bottom-6 text-[10px] uppercase font-bold text-brand-charcoal/30 tracking-widest group-hover:opacity-100 transition-opacity">
+                <span className="absolute bottom-6 bg-white/80 backdrop-blur-xs px-3.5 py-1.5 rounded-full border border-brand-beige/50 text-[10px] uppercase font-bold text-brand-charcoal tracking-widest opacity-0 group-hover:opacity-100 transition-opacity shadow-sm">
                   Click to Zoom and inspect formula label
                 </span>
               </div>
@@ -177,11 +188,20 @@ export default function ProductDetails({
           <div className="grid grid-cols-4 gap-4">
             <button
               onClick={() => { setIs360Active(false); }}
-              className={`border p-3.5 rounded-2xl flex items-center justify-center bg-brand-cream/10 hover:bg-brand-cream/30 transition-colors cursor-pointer ${!is360Active ? "border-brand-rosegold ring-1 ring-brand-rosegold" : "border-brand-beige"}`}
+              className={`border p-1 rounded-2xl flex items-center justify-center bg-brand-cream/10 hover:bg-brand-cream/30 transition-colors cursor-pointer overflow-hidden ${!is360Active ? "border-brand-rosegold ring-1 ring-brand-rosegold" : "border-brand-beige"}`}
             >
-              <div className="scale-75">
-                <ProductSVG shapeType={product.shapeType} gradientFrom={product.gradientFrom} gradientTo={product.gradientTo} name={product.name} />
-              </div>
+              {product.image ? (
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  className="w-full h-full aspect-square object-cover rounded-xl"
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className="scale-75 p-2">
+                  <ProductSVG shapeType={product.shapeType} gradientFrom={product.gradientFrom} gradientTo={product.gradientTo} name={product.name} />
+                </div>
+              )}
             </button>
             
             <button
@@ -559,13 +579,22 @@ export default function ProductDetails({
               >
                 <div className="aspect-[4/5] bg-brand-cream/10 rounded-xl mb-3 flex items-center justify-center relative overflow-hidden group-hover:scale-[1.01] transition-transform">
                   {disc > 0 && (
-                    <span className="absolute top-2 left-2 bg-brand-gold text-[8px] text-white px-1.5 py-0.5 rounded font-sans uppercase font-semibold">
+                    <span className="absolute top-2 left-2 bg-brand-gold text-[8px] text-white px-1.5 py-0.5 rounded font-sans uppercase font-semibold z-10">
                       {disc}% off
                     </span>
                   )}
-                  <div className="scale-75">
-                    <ProductSVG shapeType={p.shapeType} gradientFrom={p.gradientFrom} gradientTo={p.gradientTo} name={p.name} />
-                  </div>
+                  {p.image ? (
+                    <img 
+                      src={p.image} 
+                      alt={p.name} 
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      referrerPolicy="no-referrer"
+                    />
+                  ) : (
+                    <div className="scale-75">
+                      <ProductSVG shapeType={p.shapeType} gradientFrom={p.gradientFrom} gradientTo={p.gradientTo} name={p.name} />
+                    </div>
+                  )}
                 </div>
 
                 <div className="text-left">
@@ -592,8 +621,20 @@ export default function ProductDetails({
             <h3 className="text-base font-serif font-bold text-brand-charcoal border-b border-brand-beige pb-3 w-full">
               {product.name}
             </h3>
-            <div className="scale-180 p-8">
-              <ProductSVG shapeType={product.shapeType} gradientFrom={product.gradientFrom} gradientTo={product.gradientTo} name={product.name} />
+            <div className="w-44 h-44 rounded-full overflow-hidden border-2 border-brand-beige flex items-center justify-center relative shadow-inner bg-brand-ivory">
+              {product.image ? (
+                <img 
+                  src={product.image} 
+                  alt={product.name} 
+                  className="w-full h-full object-cover animate-pulse"
+                  style={{ animationDuration: "3s" }}
+                  referrerPolicy="no-referrer"
+                />
+              ) : (
+                <div className="scale-150">
+                  <ProductSVG shapeType={product.shapeType} gradientFrom={product.gradientFrom} gradientTo={product.gradientTo} name={product.name} />
+                </div>
+              )}
             </div>
             
             <div className="space-y-2 text-left w-full bg-brand-cream/20 p-4 rounded-xl border border-brand-beige">

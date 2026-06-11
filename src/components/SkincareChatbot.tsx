@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { MessageSquare, Sparkles, Send, X, AlertCircle, ShoppingBag, Eye, Loader2, ArrowRight, CheckCircle, RefreshCw } from "lucide-react";
+import { MessageSquare, Sparkles, Send, X, AlertCircle, ShoppingBag, Eye, Loader2, ArrowRight, CheckCircle, RefreshCw, Mic, MicOff, Volume2, VolumeX } from "lucide-react";
 import { PRODUCTS, Product } from "../products";
 
 interface Message {
@@ -47,6 +47,118 @@ export default function SkincareChatbot({ onSelectProduct, onAddToCart, setActiv
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
+  // Voice Assistant states
+  const [isListening, setIsListening] = useState(false);
+  const [speechSupported, setSpeechSupported] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState<number | null>(null);
+  const [autoReadAloud, setAutoReadAloud] = useState(false);
+  
+  const recognitionRef = useRef<any>(null);
+
+  useEffect(() => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (SpeechRecognition) {
+      setSpeechSupported(true);
+    }
+  }, []);
+
+  // Cleanup speech synthesis when unmounted or details closed
+  useEffect(() => {
+    return () => {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, [isOpen]);
+
+  const speakText = (text: string, index: number) => {
+    if (!window.speechSynthesis) return;
+
+    if (window.speechSynthesis.speaking) {
+      window.speechSynthesis.cancel();
+      if (isSpeaking === index) {
+        setIsSpeaking(null);
+        return;
+      }
+    }
+
+    const cleanText = cleanMessageText(text);
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    
+    // Choose high quality English voice if available
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice = voices.find(
+      v => v.lang.startsWith("en") && 
+      (v.name.includes("Google") || v.name.includes("Natural") || v.name.includes("Female") || v.name.includes("Samantha"))
+    );
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
+    }
+    
+    utterance.rate = 1.0;
+    utterance.pitch = 1.05;
+
+    utterance.onstart = () => {
+      setIsSpeaking(index);
+    };
+
+    utterance.onend = () => {
+      setIsSpeaking(null);
+    };
+
+    utterance.onerror = () => {
+      setIsSpeaking(null);
+    };
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const startListening = () => {
+    const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SpeechRecognition) return;
+
+    try {
+      if (recognitionRef.current) {
+        recognitionRef.current.abort();
+      }
+
+      const recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = "en-US";
+
+      recognition.onstart = () => {
+        setIsListening(true);
+      };
+
+      recognition.onerror = () => {
+        setIsListening(false);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+      };
+
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setInputVal(prev => prev + (prev.trim() ? " " : "") + transcript);
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch (err) {
+      console.error(err);
+      setIsListening(false);
+    }
+  };
+
+  const stopListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    }
+  };
+
   // Auto scroll messages
   useEffect(() => {
     if (messagesEndRef.current) {
@@ -79,9 +191,18 @@ export default function SkincareChatbot({ onSelectProduct, onAddToCart, setActiv
 
       const data = await response.json();
       if (data.reply) {
-        setMessages(prev => [...prev, { role: "assistant", content: data.reply }]);
+        setMessages(prev => {
+          const next = [...prev, { role: "assistant", content: data.reply } as Message];
+          if (autoReadAloud) {
+            const nextIdx = next.length - 1;
+            setTimeout(() => {
+              speakText(data.reply, nextIdx);
+            }, 80);
+          }
+          return next;
+        });
       } else if (data.error) {
-        setMessages(prev => [...prev, { role: "assistant", content: `System Error: ${data.error}` }]);
+        setMessages(prev => [...prev, { role: "assistant", content: `System Error: ${data.error}` } as Message]);
       }
     } catch (err: any) {
       setMessages(prev => [
@@ -182,12 +303,41 @@ Could you diagnose my skin issues and recommend the absolute best products from 
               </div>
             </div>
             
-            <button
-              onClick={() => setIsOpen(false)}
-              className="p-1 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            <div className="flex items-center space-x-1">
+              {/* Auto Read Aloud Toggle */}
+              <button
+                type="button"
+                onClick={() => {
+                  setAutoReadAloud(prev => {
+                    const nextVal = !prev;
+                    if (!nextVal && window.speechSynthesis) {
+                      window.speechSynthesis.cancel();
+                      setIsSpeaking(null);
+                    }
+                    return nextVal;
+                  });
+                }}
+                className={`p-1.5 rounded-full transition-all cursor-pointer ${
+                  autoReadAloud 
+                    ? "text-brand-gold bg-white/10" 
+                    : "text-white/40 hover:text-white/80 hover:bg-white/5"
+                }`}
+                title={autoReadAloud ? "Voice auto read-aloud active" : "Auto read-aloud off"}
+              >
+                {autoReadAloud ? (
+                  <Volume2 className="w-3.5 h-3.5 animate-bounce" />
+                ) : (
+                  <VolumeX className="w-3.5 h-3.5" />
+                )}
+              </button>
+
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-1 rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </header>
 
           {/* Subheader Switch Tabs */}
@@ -233,13 +383,27 @@ Could you diagnose my skin issues and recommend the absolute best products from 
                     >
                       {/* Message Bubble */}
                       <div 
-                        className={`max-w-[85%] rounded-2xl p-3.5 text-xs font-sans leading-relaxed shadow-xs ${
+                        className={`max-w-[85%] rounded-2xl p-3.5 text-xs font-sans leading-relaxed shadow-xs relative group/bubble ${
                           isAssistant 
                             ? "bg-white text-brand-charcoal border border-brand-beige" 
                             : "bg-brand-charcoal text-white"
                         }`}
                       >
-                        <p className="whitespace-pre-line">{cleanText}</p>
+                        {isAssistant && (
+                          <button
+                            type="button"
+                            onClick={() => speakText(message.content, index)}
+                            className="absolute top-2 right-2 p-1 rounded-md bg-brand-cream/20 hover:bg-brand-cream text-brand-charcoal/50 hover:text-brand-rosegold transition-all duration-200 cursor-pointer"
+                            title={isSpeaking === index ? "Stop voice guidance" : "Listen to routine recommendation"}
+                          >
+                            {isSpeaking === index ? (
+                              <VolumeX className="w-3.5 h-3.5 text-brand-rosegold animate-pulse" />
+                            ) : (
+                              <Volume2 className="w-3.5 h-3.5" />
+                            )}
+                          </button>
+                        )}
+                        <p className={`whitespace-pre-line ${isAssistant ? "pr-6" : ""}`}>{cleanText}</p>
                         
                         {/* Interactive Curated Product cards Carousel below assistant messages */}
                         {isAssistant && matchingProducts.length > 0 && (
@@ -396,20 +560,40 @@ Could you diagnose my skin issues and recommend the absolute best products from 
           {activeTabPanel === "chat" && (
             <form 
               onSubmit={handleInputSubmit}
-              className="p-3 border-t border-brand-beige bg-white flex gap-2 font-sans select-none"
+              className="p-3 border-t border-brand-beige bg-white flex gap-2 font-sans select-none items-center"
             >
-              <input
-                type="text"
-                placeholder="Type your skincare concerns..."
-                value={inputVal}
-                onChange={(e) => setInputVal(e.target.value)}
-                disabled={isLoading}
-                className="flex-grow px-4 py-2.5 rounded-xl border border-brand-beige bg-brand-cream/10 text-xs focus:outline-none focus:border-brand-rosegold text-brand-charcoal disabled:opacity-50 font-medium"
-              />
+              <div className="flex-grow relative">
+                <input
+                  type="text"
+                  placeholder={isListening ? "Listening with AI..." : "Type your skincare concerns..."}
+                  value={inputVal}
+                  onChange={(e) => setInputVal(e.target.value)}
+                  disabled={isLoading}
+                  className={`w-full px-4 py-2.5 rounded-xl border border-brand-beige bg-brand-cream/10 text-xs focus:outline-none focus:border-brand-rosegold text-brand-charcoal disabled:opacity-50 font-medium ${speechSupported ? "pr-10" : ""}`}
+                />
+                
+                {/* Voice typing button in the input field */}
+                {speechSupported && (
+                  <button
+                    type="button"
+                    onClick={isListening ? stopListening : startListening}
+                    disabled={isLoading}
+                    className={`absolute right-2 top-1/2 -translate-y-1/2 p-1.5 rounded-lg transition-all cursor-pointer ${
+                      isListening 
+                        ? "bg-rose-500/10 text-rose-500 animate-pulse font-bold" 
+                        : "text-brand-charcoal/40 hover:text-brand-charcoal hover:bg-brand-cream/20"
+                    }`}
+                    title={isListening ? "Stop listening" : "Talk to advisor"}
+                  >
+                    <Mic className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
               <button
                 type="submit"
                 disabled={isLoading || !inputVal.trim()}
-                className="p-2.5 bg-brand-charcoal text-white rounded-xl hover:bg-brand-rosegold transition-colors disabled:opacity-40 cursor-pointer flex items-center justify-center"
+                className="p-2.5 bg-brand-charcoal text-white rounded-xl hover:bg-brand-rosegold transition-colors disabled:opacity-40 cursor-pointer flex items-center justify-center shrink-0"
               >
                 <Send className="w-4 h-4" />
               </button>

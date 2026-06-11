@@ -142,12 +142,21 @@ export default function ProductCard({
       {/* Product Image Stage container */}
       <div 
         onClick={() => onSelectProduct(product)}
-        className="aspect-[4/5] bg-gradient-to-tr from-brand-beige/10 via-brand-pink/5 to-brand-cream/10 flex items-center justify-center relative overflow-hidden group-hover:scale-[1.01] transition-transform duration-500 cursor-pointer p-6"
+        className={`aspect-[4/5] bg-gradient-to-tr from-brand-beige/10 via-brand-pink/5 to-brand-cream/10 flex items-center justify-center relative overflow-hidden group-hover:scale-[1.01] transition-transform duration-500 cursor-pointer ${product.image ? "" : "p-6"}`}
       >
         <div className={`absolute bottom-3 right-3 p-1 rounded-full ${product.bgDecorative} opacity-20 w-36 h-36 rounded-full blur-xl pointer-events-none`}></div>
         
-        {/* Customized SVG Bottle Renderer */}
-        <ProductSVG shapeType={product.shapeType} gradientFrom={product.gradientFrom} gradientTo={product.gradientTo} name={product.name} />
+        {product.image ? (
+          <img 
+            src={product.image} 
+            alt={product.name} 
+            className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+            referrerPolicy="no-referrer"
+          />
+        ) : (
+          /* Customized SVG Bottle Renderer */
+          <ProductSVG shapeType={product.shapeType} gradientFrom={product.gradientFrom} gradientTo={product.gradientTo} name={product.name} />
+        )}
 
         {/* Hover quick action overlay drawer bottom */}
         <div className="absolute inset-0 bg-brand-charcoal/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4 space-x-2">

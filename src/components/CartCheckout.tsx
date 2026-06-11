@@ -176,10 +176,19 @@ export default function CartCheckout({
                   className="p-5 bg-white border border-brand-beige rounded-3xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-5 hover:border-brand-rosegold/30 transition-colors"
                 >
                   <div className="flex items-center space-x-4 cursor-pointer" onClick={() => setActiveTab("shop")}>
-                    <div className={`w-14 h-16 ${item.product.bgDecorative} rounded-2xl flex items-center justify-center p-2 flex-shrink-0 shadow-sm`}>
-                      <div className="scale-60">
-                        <ProductSVG shapeType={item.product.shapeType} gradientFrom={item.product.gradientFrom} gradientTo={item.product.gradientTo} name={item.product.name} />
-                      </div>
+                    <div className={`w-14 h-16 ${item.product.bgDecorative} rounded-2xl flex items-center justify-center flex-shrink-0 shadow-sm overflow-hidden ${item.product.image ? "" : "p-2"}`}>
+                      {item.product.image ? (
+                        <img 
+                          src={item.product.image} 
+                          alt={item.product.name} 
+                          className="w-full h-full object-cover"
+                          referrerPolicy="no-referrer"
+                        />
+                      ) : (
+                        <div className="scale-60">
+                          <ProductSVG shapeType={item.product.shapeType} gradientFrom={item.product.gradientFrom} gradientTo={item.product.gradientTo} name={item.product.name} />
+                        </div>
+                      )}
                     </div>
                     <div className="text-left font-sans">
                       <h3 className="text-xs font-bold text-brand-charcoal leading-snug line-clamp-1">{item.product.name}</h3>

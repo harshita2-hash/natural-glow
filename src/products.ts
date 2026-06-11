@@ -35,6 +35,7 @@ export interface Product {
   description: string;
   faqs: FAQ[];
   reviews: Review[];
+  image?: string;
   // Aesthetic configuration for SVG representation
   gradientFrom: string;
   gradientTo: string;
@@ -51,6 +52,7 @@ export const PRODUCTS: Product[] = [
     price: 1299,
     originalPrice: 1599,
     rating: 4.9,
+    image: 'https://files.catbox.moe/x7q4gm.webp?auto=format&fit=crop&q=80&w=400',
     reviewsCount: 154,
     tag: "Best Seller",
     skinType: "All Skin Types, Dull Skin",
@@ -79,6 +81,7 @@ export const PRODUCTS: Product[] = [
     name: "Hyaluronic Acid Multi-Moisture Booster",
     category: "serums",
     categoryLabel: "Face Serums",
+    image: "https://images.unsplash.com/photo-1617897903246-719242758050?auto=format&fit=crop&q=80&w=400",
     price: 899,
     originalPrice: 1199,
     rating: 4.8,
@@ -109,6 +112,7 @@ export const PRODUCTS: Product[] = [
     name: "10% Niacinamide Pore-Refining Corrector",
     category: "serums",
     categoryLabel: "Face Serums",
+    image: 'https://files.catbox.moe/htj8wa.jpg?auto=format&fit=crop&q=80&w=400',
     price: 949,
     originalPrice: 1099,
     rating: 4.7,
@@ -139,6 +143,7 @@ export const PRODUCTS: Product[] = [
     name: "Ceramide Deep Barrier Moisturizer",
     category: "moisturizers",
     categoryLabel: "Moisturizers",
+    image: "https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&q=80&w=400",
     price: 749,
     originalPrice: 899,
     rating: 4.9,
@@ -169,6 +174,7 @@ export const PRODUCTS: Product[] = [
     name: "Ultra Shield Matte SPF 50+ PA++++",
     category: "sunscreens",
     categoryLabel: "Sunscreens",
+    image: "https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?auto=format&fit=crop&q=80&w=400",
     price: 699,
     originalPrice: 799,
     rating: 4.8,
@@ -199,6 +205,7 @@ export const PRODUCTS: Product[] = [
     name: "Centella Gentle Foaming Face Wash",
     category: "face-wash",
     categoryLabel: "Face Washes",
+    image: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&q=80&w=400",
     price: 549,
     originalPrice: 649,
     rating: 4.7,
@@ -229,6 +236,7 @@ export const PRODUCTS: Product[] = [
     name: "2% Salicylic Acid Blemish gel",
     category: "acne-care",
     categoryLabel: "Acne Care",
+    image: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&q=80&w=400",
     price: 799,
     originalPrice: 999,
     rating: 4.6,
@@ -259,6 +267,7 @@ export const PRODUCTS: Product[] = [
     name: "0.5% Retinol Youth Renewal Cream",
     category: "anti-aging",
     categoryLabel: "Anti-Aging",
+    image: "https://images.unsplash.com/photo-1620916566398-39f1143ab7be?auto=format&fit=crop&q=80&w=400",
     price: 1399,
     originalPrice: 1699,
     rating: 4.9,
